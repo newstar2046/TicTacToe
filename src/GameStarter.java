@@ -20,28 +20,28 @@ public class GameStarter {
             Arrays.fill(line, defaultVal);
         }
         //horizontal
-        winLines.add("00,01,02");
-        winLines.add("10,11,12");
-        winLines.add("20,21,22");
+        winLines.add("11,12,13");
+        winLines.add("21,22,23");
+        winLines.add("31,32,33");
         //cross
-        winLines.add("00,11,22");
-        winLines.add("02,11,20");
+        winLines.add("11,22,33");
+        winLines.add("13,22,31");
         //vertical
-        winLines.add("00,10,20");
-        winLines.add("01,11,21");
-        winLines.add("02,12,22");
+        winLines.add("11,21,31");
+        winLines.add("12,22,32");
+        winLines.add("13,23,33");
     }
     public void initialGame() {
         System.out.println("┌───┬───┬───┐");
-        System.out.println("│   │   │   │");
+        System.out.println("│1 1│1 2│1 3│");
         System.out.println("├───┼───┼───┤");
-        System.out.println("│   │   │   │");
+        System.out.println("│2 1│2 2│2 3│");
         System.out.println("├───┼───┼───┤");
-        System.out.println("│   │   │   │");
+        System.out.println("│3 1│3 2│3 3│");
         System.out.println("└───┴───┴───┘");
         while(step < CAPACITY) {
             Scanner in = new Scanner(System.in);
-            System.out.println("Type (x,y) to place the symbol in row x, column y.");
+            System.out.println("Type (xy) to place the symbol in row x, column y.");
             System.out.print("Next player: ".concat(isXNext?X:O) .concat(", Input: "));
             String cellIndex = in.nextLine();
             int[] cellNumbers = getCellNumbers(cellIndex);
@@ -49,7 +49,6 @@ public class GameStarter {
             if (!board[cellNumbers[0] - 1][cellNumbers[1] - 1].equals(defaultVal)) {
                 System.out.println(cellIndex + " has been placed, please choose another cell.");
                 printBroad();
-                step ++;
             } else {
                 if (isXNext) {
                     board[cellNumbers[0] - 1][cellNumbers[1] - 1] = X;
@@ -58,13 +57,14 @@ public class GameStarter {
                 }
                 printBroad();
                 step ++;
-                int currentState = caculateWinner();
-                if (currentState == 1) { //1: win
-                    System.out.print("Congratulations!!! Player: ".concat(isXNext?X:O) .concat(" won the game!!!"));
-                    break;
-                } else if (currentState == 9) { //9: on draw
-                    System.out.print("Game finished! Nobody win.");
-                    break;
+                if (step > 4) { //possibly there is a winner
+                    if (isWin()) { //win
+                        System.out.print("Congratulations!!! Player: ".concat(isXNext ? X : O).concat(" won the game!!!"));
+                        break;
+                    } else if (step == 9) { //in draw
+                        System.out.print("Game finished! Nobody win.");
+                        break;
+                    }
                 }
                 isXNext = !isXNext;
             }
@@ -72,13 +72,14 @@ public class GameStarter {
     }
 
     private int[] getCellNumbers(String cellIndex) {
-        if(cellIndex == null || cellIndex.indexOf(SEPARATOR) < 0) {
+        if(cellIndex == null || cellIndex.length() != 2) {
             throw new RuntimeException("Invalid input!");
         }
-        String[] cellNumbers = cellIndex.split(SEPARATOR);
-        int rowNum = Integer.valueOf(cellNumbers[0]);
-        int columnNum = Integer.valueOf(cellNumbers[1]);
-        return new int[] {rowNum, columnNum};
+        try {
+            return new int[] {cellIndex.charAt(0) - '0',(int)cellIndex.charAt(1) - '0'};
+        }catch (Exception e) {
+            throw new RuntimeException("Invalid input!");
+        }
     }
 
     private void printBroad(){
@@ -90,19 +91,17 @@ public class GameStarter {
         System.out.println("│ " + board[2][0] + " │ " + board[2][1] + " │ " + board[2][2] + " │");
         System.out.println("└───┴───┴───┘");
     }
-    private int caculateWinner() {
+    private boolean isWin() {
         StringBuilder result = new StringBuilder();
         String winner = isXNext?X:O;
-        int countOfValueCells = 0;
         for (int j = 0; j < board.length; j++) {
             String[] columnArr = board[j];
             for (int k = 0; k < columnArr.length; k++) {
                 if(board[j][k].equals(defaultVal)) {
                     continue;
                 }
-                countOfValueCells++;
                 if (board[j][k].equals(winner)) {
-                    result.append(j).append(k).append(SEPARATOR);
+                    result.append(j + 1).append(k + 1).append(SEPARATOR);
                 }
             }
         }
@@ -116,13 +115,10 @@ public class GameStarter {
             }
             if (isWin) {
                 System.out.println(winLine);
-                return 1;
+                return true;
             }
         }
-        if (countOfValueCells == CAPACITY) {
-            return 9;
-        }
-        return -1;
+        return false;
     }
     public static void main(String[] args) {
         GameStarter game = new GameStarter();

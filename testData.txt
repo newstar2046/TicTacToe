@@ -1,0 +1,25 @@
+Test case 1: Player X win
+    step 1: player X put 11
+    step 2: player O put 12
+    step 3: player X put 22
+    step 4: player O put 13
+    step 5: player X put 33
+
+Test case 2: Player O win
+    step 1: player X put 21
+    step 2: player O put 11
+    step 3: player X put 31
+    step 4: player O put 12
+    step 5: player X put 22
+    step 6: player O put 13
+
+Test case 3: End in draw
+    step 1: player X put 11
+    step 2: player O put 12
+    step 3: player X put 13
+    step 4: player O put 22
+    step 5: player X put 21
+    step 6: player O put 31
+    step 7: player X put 32
+    step 8: player O put 23
+    step 9: player X put 33
