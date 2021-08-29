@@ -13,7 +13,7 @@ public class GameStarter {
     private final String X = "X";
     private final String O = "O";
     private final String SEPARATOR = ",";
-    private final List<String> winLines = new ArrayList();
+    private final List<String> winLines = new ArrayList<>();
 
     GameStarter(){
         for(String[] line : board){
